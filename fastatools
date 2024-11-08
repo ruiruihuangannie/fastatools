@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+from makecanonical import makecanonical
+from keepprimary import keepprimary
+from gffextract import gffextract
+from gffdiscard import gffdiscard
+from rDNAaddparent import rDNAaddparent
+from replacechrY import replacechrY
+import argparse
+
+def main():
+    parser = argparse.ArgumentParser(prog="fastatools", description="A toolset for processing FASTA files.")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # Sub-command for makecanonical
+    parser_makecanonical = subparsers.add_parser("makecanonical", help="Make FASTA/GTF/GFF canonical.")
+    parser_makecanonical.add_argument("-fi", metavar='FILE', required=True, type=str, help="Path to FASTA/GTF/GFF file to be canonicalized.")
+    parser_makecanonical.add_argument("-mapfile", metavar='FILE', required=True, type=str, help="Path to csv map file.")
+    parser_makecanonical.add_argument("-fo", metavar='FILE', required=False, type=str, help="Path to the output FASTA/GTF/GFF file.")
+
+    # Sub-command for keepprimary
+    parser_keepprimary = subparsers.add_parser("keepprimary", help="Keep primary assemblies in FASTA/GTF/GFF.")
+    parser_keepprimary.add_argument("-fi", metavar='FILE', required=True, type=str, help="Path to the input FASTA/GTF/GFF file.")
+    parser_keepprimary.add_argument("-keyword", required=False, type=list, default=['Primary','mitochondrion'], help="Keywords to keep identify primary sequences.")
+    parser_keepprimary.add_argument("-list", metavar='FILE', required=False, type=str, help="Names of primary assemblies.")
+    parser_keepprimary.add_argument("-fo", metavar='FILE', required=False, type=str, help="Path to the output FASTA/GTF/GFF file.")
+    parser_keepprimary.add_argument('-listfo', metavar='FILE', required=False, type=str, help="For GTF/GFF, output names of primary assemblies.")
+
+    # Sub-command for gffextract
+    parser_gffextract = subparsers.add_parser("gffextract", help="Extract specified regions from GTF/GFF file.")
+    parser_gffextract.add_argument("-fi", metavar='FILE', required=True, type=str, help="Path to the input GTF/GFF file.")
+    parser_gffextract.add_argument('-VDJ', required=False, action="store_true", help="Extract VDJ regions [default: False]")
+    parser_gffextract.add_argument('-rDNA', required=False, action="store_true", help="Extract rDNA regions [default: False]")
+    parser_gffextract.add_argument('-chrY', required=False, action="store_true", help="Extract chrY regions [default: False]")
+    parser_gffextract.add_argument("-fo", metavar='FILE', required=False, type=str, default=None, help="Path to the output GTF/GFF file.")
+
+    # Sub-command for gffextract
+    parser_gffdiscard = subparsers.add_parser("gffdiscard", help="Discard specified regions from GTF/GFF file.")
+    parser_gffdiscard.add_argument("-fi", metavar='FILE', required=True, type=str, help="Path to the input GTF/GFF file.")
+    parser_gffdiscard.add_argument('-VDJ', required=False, action="store_true", help="Discard VDJ regions [default: False]")
+    parser_gffdiscard.add_argument('-rDNA', required=False, action="store_true", help="Discard rDNA regions [default: False]")
+    parser_gffdiscard.add_argument('-chrY', required=False, action="store_true", help="Discard chrY regions [default: False]")
+    parser_gffdiscard.add_argument("-fo", metavar='FILE', required=False, type=str, default=None, help="Path to the output GTF/GFF file.")
+
+    # Sub-command for rDNAextract
+    parser_rDNAaddparent = subparsers.add_parser("rDNAaddparent", help="Extract rDNA arrays from GTF/GFF file.")
+    parser_rDNAaddparent.add_argument("-fi", metavar='FILE', required=True, type=str, help="Path to the input GTF/GFF file.")
+    parser_rDNAaddparent.add_argument("-fo", metavar='FILE', required=True, type=str, help="Path to the output GTF/GFF file.")
+
+    # Sub-command for replacechrY
+    parser_replacechrY = subparsers.add_parser("replacechrY", help="Combine two GTF/GFF file")
+    parser_replacechrY.add_argument("-f1", metavar='FILE', required=True, type=str, help="Path to the primary input.")
+    parser_replacechrY.add_argument("-f2", metavar='FILE', required=True, type=str, help="Path to the input with chrY.")
+    parser_replacechrY.add_argument("-fo", metavar='FILE', required=True, type=str, help="Path to the output GTF/GFF file.")
+
+    # Parse the arguments
+    args = parser.parse_args()
+
+    # Call the appropriate function based on the command
+    if args.command == "makecanonical":
+        makecanonical(args.fi, args.fo, args.mapfile)
+    elif args.command == "keepprimary":
+        keepprimary(args.fi, args.fo, args.keyword, args.list, args.listfo)
+    elif args.command == 'gffextract':
+        gffextract(args.fi, args.fo, args.VDJ, args.rDNA, args.chrY)
+    elif args.command == 'gffdiscard':
+        gffdiscard(args.fi, args.fo, args.VDJ, args.rDNA, args.chrY)
+    elif args.command == 'rDNAaddparent':
+        rDNAaddparent(args.fi, args.fo)
+    elif args.command == 'replacechrY':
+        replacechrY(args.f1, args.f2, args.fo)
+
+if __name__ == "__main__":
+    main()
