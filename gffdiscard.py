@@ -34,10 +34,11 @@ def gffdiscard(infile, outfile, discard_VDJ, discard_rDNA, discard_chrY):
 
     if discard_VDJ and f_type in ['gene', 'pseudogene']:
       g_id, g_type = extract_parent_annotation(f_annot)
-      if g_type in ["V_segment", "D_segment", "J_segment", "J_segment_pseudogene", "V_segment_pseudogene"]:
+      if g_type in ["V_segment", "D_segment", "J_segment", "J_segment_pseudogene", "V_segment_pseudogene",
+                    "IG_C_gene","IG_C_pseudogene","IG_D_gene","IG_J_gene","IG_J_pseudogene","IG_pseudogene","IG_V_gene","IG_V_pseudogene","TR_C_gene","TR_D_gene","TR_J_gene","TR_J_pseudogene","TR_V_gene","TR_V_pseudogene"]:
         g_lst.append(g_id)
         continue
-    elif discard_VDJ and f_type in ['V_gene_segment', 'D_gene_segment', 'J_gene_segment', 'CDS', 'exon']:
+    elif discard_VDJ and f_type in ['V_gene_segment', 'D_gene_segment', 'J_gene_segment', 'transcript', 'CDS', 'exon']:
       t_id, t_parent = extract_child_annotation(f_annot)
       if t_parent in g_lst and t_id:
         vdj_lst.append(t_id)
