@@ -15,14 +15,14 @@ def main():
     parser_makecanonical = subparsers.add_parser("makecanonical", help="Make FASTA/GTF/GFF canonical.")
     parser_makecanonical.add_argument("-fi", metavar='FILE', required=True, type=str, help="Path to FASTA/GTF/GFF file to be canonicalized.")
     parser_makecanonical.add_argument("-mapfile", metavar='FILE', required=True, type=str, help="Path to csv map file.")
-    parser_makecanonical.add_argument("-fo", metavar='FILE', required=False, type=str, help="Path to the output FASTA/GTF/GFF file.")
+    parser_makecanonical.add_argument("-fo", metavar='FILE', required=True, type=str, help="Path to the output FASTA/GTF/GFF file.")
 
     # Sub-command for keepprimary
     parser_keepprimary = subparsers.add_parser("keepprimary", help="Keep primary assemblies in FASTA/GTF/GFF.")
     parser_keepprimary.add_argument("-fi", metavar='FILE', required=True, type=str, help="Path to the input FASTA/GTF/GFF file.")
     parser_keepprimary.add_argument("-keyword", required=False, type=list, default=['Primary','mitochondrion'], help="Keywords to keep identify primary sequences.")
     parser_keepprimary.add_argument("-list", metavar='FILE', required=False, type=str, help="Names of primary assemblies.")
-    parser_keepprimary.add_argument("-fo", metavar='FILE', required=False, type=str, help="Path to the output FASTA/GTF/GFF file.")
+    parser_keepprimary.add_argument("-fo", metavar='FILE', required=True, type=str, help="Path to the output FASTA/GTF/GFF file.")
     parser_keepprimary.add_argument('-listfo', metavar='FILE', required=False, type=str, help="For GTF/GFF, output names of primary assemblies.")
 
     # Sub-command for gffextract
@@ -57,7 +57,7 @@ def main():
 
     # Call the appropriate function based on the command
     if args.command == "makecanonical":
-        makecanonical(args.fi, args.fo, args.mapfile)
+        makecanonical(args.fi, args.fo, args.mapfile)   
     elif args.command == "keepprimary":
         keepprimary(args.fi, args.fo, args.keyword, args.list, args.listfo)
     elif args.command == 'gffextract':

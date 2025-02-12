@@ -3,14 +3,9 @@ from tqdm import tqdm
 
 def keepprimary(file, outfile, keyword, lst, out_lst_names):
   fh = open(file, 'r')
-  if not outfile:
-    nm = file.rstrip().split('.')
-    out_fn = nm[0] + '_primary.' + nm[1]
-  out_fh = open(out_fn, 'w')
+  out_fh = open(outfile, 'w')
   if not out_lst_names:
     out_lst_names = file.rstrip().split('.')[0] + '_primary.txt'
-  out_lst_fh = open(out_lst_names, 'w')
-
   deleted = 0
   if any(ext in file for ext in ['gff', 'gtf']):
     primaries = load_primary_names(open(lst, 'r'))
@@ -21,6 +16,7 @@ def keepprimary(file, outfile, keyword, lst, out_lst_names):
       else:
         deleted += 1
   elif any(ext in file for ext in ['fna', 'fa', 'fasta']):
+    out_lst_fh = open(out_lst_names, 'w')
     kept = False
     for line in tqdm(fh.readlines(), desc="Processed fna entries"):
       if line.startswith('>'):
@@ -33,8 +29,8 @@ def keepprimary(file, outfile, keyword, lst, out_lst_names):
           deleted += 1
       if kept:
         out_fh.write(line)
+    out_lst_fh.close()
   print(f'[Info]: {deleted} entries not on the primary assembly of {file}')
   fh.close()
   out_fh.close()
-  out_lst_fh.close()
-  return out_fn
+  return outfile
